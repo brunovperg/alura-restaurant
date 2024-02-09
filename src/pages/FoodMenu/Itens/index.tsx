@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Item from './Item';
 import style from './Itens.module.scss';
-import itens from './itens.json';
+import itens from 'data/menu.json';
 
 interface ItensProps {
 	filter: number | null;
@@ -20,8 +20,14 @@ export default function Itens({ filter, search, sort }: ItensProps) {
 			}
 
 			if (search !== '') {
-				const regex = new RegExp(search, 'i');
-				return regex.test(item.title) || regex.test(item.description);
+				const normalizeStr = (str: string) =>
+					str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+				const regex = new RegExp(normalizeStr(search), 'i');
+
+				return (
+					regex.test(normalizeStr(item.title)) ||
+					regex.test(normalizeStr(item.description))
+				);
 			}
 
 			return true;
